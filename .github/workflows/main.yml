@@ -1,0 +1,29 @@
+name: Sync Fork
+
+on:
+  schedule:
+    # 每天凌晨2点（UTC时间）运行
+    - cron: '0 2 * * *'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: lyfcom/LibreTV # 替换为你的 Fork 仓库
+          token: ${{ secrets.PAT }} # 使用 Personal Access Token (PAT)
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/LibreSpark/LibreTV.git # 替换为上游仓库地址
+
+      - name: Fetch upstream
+        run: git fetch upstream
+
+      - name: Merge upstream into main
+        run: git merge upstream/main # 替换 'main' 为你的默认分支名，如 'master'
+
+      - name: Push changes
+        run: git push origin main # 替换 'main' 为你的默认分支名，如 'master'
